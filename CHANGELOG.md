@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.4](https://github.com/xTCry/node-swiftpay-api/compare/v1.0.3...v1.0.4) (2022-01-26)
+
+
+### Bug Fixes
+
+* **types:** renamed `PaymentResponse` ([04f2e2d](https://github.com/xTCry/node-swiftpay-api/commit/04f2e2d57da386def340591fb0e6c233cf043c30))
+
 ### [1.0.3](https://github.com/xTCry/node-swiftpay-api/compare/v1.0.2...v1.0.3) (2022-01-26)
 
 
