@@ -367,7 +367,7 @@ export type ResponseCreatePayout = {
 
 export type ParamsCreateOrder = {
   /** Номер заказа в системе мерчанта. **Должен быть уникальным** */
-  order_id: number;
+  order_id: string;
   /** Сумма */
   amount: number;
   /** Описание. *Необязательный параметр* */
@@ -383,7 +383,7 @@ export type ParamsCreateOrder = {
 
 export type ResponseCreateOrder = {
   /** Уникальный номер заказа за базе Swiftpay */
-  id: number;
+  id: number | string;
   /** Ссылка на оплату */
   link: string;
   info: {
@@ -405,7 +405,7 @@ export type ParamsPayInCreate = {
    * **Должен быть уникальным**
    * *до 36 симв*
    * */
-  order_id: number;
+  order_id: string;
   /** Сумма пополнения. `float`	**от 1 до 15000** */
   amount: number;
 
@@ -436,7 +436,8 @@ export type ResponsePayInCreate = {
 // GatePay
 
 export type ParamsGatePay = {
-  /** Номер заказа в системе мерчанта. **Должен быть уникальным** */ order_id: number;
+  /** Номер заказа в системе мерчанта. **Должен быть уникальным** */
+  order_id: string;
   /** Сумма */
   amount: number;
 
