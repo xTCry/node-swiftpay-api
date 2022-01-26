@@ -34,7 +34,6 @@ export class ApiClient {
         throw new ResponseError({ errCode: -1, error: 'Method not found' } as types.IResponseErrorData);
       }
       if (e.response?.data?.error) {
-        console.log(e.response.data);
         throw new ResponseError(e.response.data as types.IResponseErrorData);
       }
       throw e;
