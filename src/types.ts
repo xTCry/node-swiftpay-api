@@ -2,7 +2,7 @@
 export enum ErrorType {
   Unknown = 'Unknown',
   InvalidToken = 'InvalidToken',
-  InvalidParams = "InvalidParams"
+  InvalidParams = 'InvalidParams',
 }
 
 /** Список доступных валют */
@@ -50,7 +50,7 @@ export enum StatusValue {
 // Deposits
 
 /** Параметры уведомления о пополнении */
-export type PaymentParams = {
+export type PaymentResponse = {
   /**
    * SHA256(order_id + amount + token + shop_id).toUpperCase()
    * Например заказ #123 на 10.43руб мерчанта с ID 22: SHA256(12310.430APIdi7O4mSNzd5ZJiMLEWKw22)
@@ -99,7 +99,7 @@ export type PaymentParams = {
 
 export interface IResponseData<T> {
   // status: 'info' | 'error' | /* ? */ 'success';
-  // desc: string;
+  text?: string;
   data: T;
 }
 
@@ -221,6 +221,38 @@ export type ResponseOrders = {
   ticket_status: null;
 }[];
 
+export type ResponseOrder = {
+  id: number;
+  url: string;
+  email: string;
+  url_redirect: string;
+  amount: number;
+  to_pay: any | null;
+  amount_in_cur: number;
+  processed_at: string;
+  description: string;
+  system_id: SystemIdType;
+  status: 0 | 1 | number;
+  substatus: 2 | number;
+  name: string;
+  created_at: string;
+  paid_at: string;
+  invoice: string | null;
+  token: string;
+  paid_at_formated: string;
+  link: string | null;
+  commission: number;
+  shop_commission: number;
+  income_in_cur: number;
+  commission_amount_in_cur: number;
+  cur: { name: CurrencyType; precision: number };
+  systems: string | null;
+  system_name: string | null;
+  /** (`true` - **оплачен**, `false` - **неоплачен**) */
+  paid: boolean;
+  check: string;
+};
+
 // Payouts
 
 type PayoutsFields = 'id' | 'amount' | 'system_id' | 'wallet' | 'created_at' | 'paid_at' | 'api' | 'status';
@@ -302,11 +334,36 @@ export type ResponseSystems = {
   regexp: string /* RegExp */;
 }[];
 
-export type ResponseOrderById = {};
+export type ResponseOrderById = {
+  id: number;
+  amount: number;
+  description: string | null;
+  system_id: SystemIdType;
+  status: 2 | number;
+  created_at: string;
+  link: string | null;
+  commission: number;
+  shop_commission: number;
+  /** (`true` - **оплачен**, `false` - **неоплачен**) */
+  paid: boolean;
+  check: string;
+};
 
-export type ResponseCreatePayout = {};
+export type ResponseCreatePayout = {
+  error: 0 | number;
+  id: number;
+  user_id: number;
+  system_id: SystemIdType;
+  amount: number;
+  wallet: string;
+  status: 0 | number;
+  created_at: string;
+  paid_at: string | null;
+  api: 0 | number;
+  props_id: null;
+};
 
-//
+// CreateOrder
 
 export type ParamsCreateOrder = {
   /** Номер заказа в системе мерчанта. **Должен быть уникальным** */
@@ -337,4 +394,85 @@ export type ResponseCreateOrder = {
     /** Объект, указанный при создании ссылки */
     data: Record<string, string | number | boolean>;
   };
+};
+
+// PayInCreate
+
+export type ParamsPayInCreate = {
+  /**
+   * Номер заказа в системе мерчанта, *заранее созданный и сохраненный в базе обязательный*
+   *
+   * **Должен быть уникальным**
+   * *до 36 симв*
+   * */
+  order_id: number;
+  /** Сумма пополнения. `float`	**от 1 до 15000** */
+  amount: number;
+
+  /**
+   * Объект, передаваемый на сервер вместе с уведомлением об успешном платеже.
+   * **Макс. количество полей: `5`**
+   */
+  data?: Record<string, string | number | boolean>;
+
+  /** Платежная система */
+  system: SystemType;
+  /** Email пользователя **от 1 до 255 симв.** */
+  email: string;
+  /** Ссылка для перенаправления на страницу успеха	**от 1 до 255 симв.** */
+  redirect_success: string;
+  /** Ссылка для перенаправления на страницу неуспеха	**от 1 до 255 симв.** */
+  redirect_fail: string;
+};
+
+export type ResponsePayInCreate = {
+  /** Уникальный номер заказа за базе Swiftpay */
+  id: number;
+  /** Ссылка на оплату */
+  link: string;
+  info: Partial<ParamsPayInCreate>;
+};
+
+// GatePay
+
+export type ParamsGatePay = {
+  /** Номер заказа в системе мерчанта. **Должен быть уникальным** */ order_id: number;
+  /** Сумма */
+  amount: number;
+
+  /**
+   * После успешной оплаты этот объект будет отправлен на ссылку уведомления.
+   * *Необязательный параметр*
+   * **Макс. количество полей: `5`**
+   */
+  data?: Record<string, string | number | boolean>;
+
+  email: string;
+  pan: string;
+  expMonth: string;
+  expYear: string;
+  cvv: string;
+  redirect_success: string;
+  redirect_fail: string;
+  browserData?: {
+    browserAcceptHeader: string;
+    browserColorDepth: string;
+    browserIP: string;
+    browserLanguage: string;
+    browserScreenHeight: string;
+    browserScreenWidth: string;
+    browserTZ: string;
+    browserUserAgent: string;
+    browserJavaEnabled: string;
+    windowWidth: string;
+    windowHeight: string;
+  };
+};
+
+export type ResponseGatePay = {
+  /** Уникальный номер заказа за базе Swiftpay */
+  id: number;
+  type: '3DS';
+  /** Ссылка на оплату */
+  link: string;
 };

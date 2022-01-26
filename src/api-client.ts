@@ -46,7 +46,7 @@ export class ApiClient {
    * @param body Объект уведомления
    * @returns {boolean} Признак валидности
    */
-  public checkSignPayment(body: types.PaymentParams) {
+  public checkSignPayment(body: types.PaymentResponse) {
     const compareSign = sha256(`${body.order_id + body.amount + this.apiKey + body.shop_id}`).toUpperCase();
 
     return body.sign === compareSign;
@@ -121,6 +121,18 @@ export class ApiClient {
   }
 
   /**
+   * Проверка платежа
+   * 
+   * [Документация Swiftpay по методу `order`](https://swiftpayru.docs.apiary.io/#reference/4/2//order/:ordertoken)
+   */
+  public async order(orderToken: string) {
+    if (!orderToken || orderToken.length < 10) {
+      throw new ParamsError('orderToken required');
+    }
+    return await this._callApi<types.ResponseOrder>(`order/${orderToken}`, 'GET');
+  }
+
+  /**
    * Получение списка выводов аккаунта с фильтрами
    */
   public async payouts(query: types.ParamsPayouts) {
@@ -182,7 +194,7 @@ export class ApiClient {
       throw new ParamsError('shopId should be a number greater than 0');
     }
     return await this._callApi<types.ResponseCreateOrder>('createOrder', 'POST', {
-      shop_id: shopId, // ID мерчанта,
+      shop_id: shopId,
       ...params,
     });
   }
@@ -198,5 +210,35 @@ export class ApiClient {
       throw new ParamsError('amount should be a number greater than 0');
     }
     return await this._callApi<types.ResponseCreatePayout>('createPayout', 'POST', { system_id, amount, wallet });
+  }
+
+  /**
+   * Создание платежа
+   * 
+   * [Документация Swiftpay по методу `payInCreate`](https://swiftpayru.docs.apiary.io/#reference/4/0//payin/create)
+   */
+  public async payInCreate(params: types.ParamsPayInCreate, shopId: number = this.shopId!) {
+    if (!shopId || Number(shopId) <= 0) {
+      throw new ParamsError('shopId should be a number greater than 0');
+    }
+    return await this._callApi<types.ResponsePayInCreate>('payIn/create', 'POST', {
+      shop_id: shopId,
+      ...params,
+    });
+  }
+
+  /**
+   * Создание платежа **по реквизитам карты**
+   * 
+   * [Документация Swiftpay по методу `gatePay`](https://swiftpayru.docs.apiary.io/#reference/4/1//gate/pay)
+   */
+  public async gatePay(params: types.ParamsGatePay, shopId: number = this.shopId!) {
+    if (!shopId || Number(shopId) <= 0) {
+      throw new ParamsError('shopId should be a number greater than 0');
+    }
+    return await this._callApi<types.ResponseGatePay>('gate/pay', 'POST', {
+      shop_id: shopId,
+      ...params,
+    });
   }
 }
