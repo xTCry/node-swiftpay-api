@@ -55,7 +55,7 @@ export class ApiClient {
    * Получение информации об аккаунте
    */
   public async getAccount() {
-    return await this._callApi<types.ResponseStats>('account', 'POST');
+    return await this._callApi<types.ResponseAccount>('account', 'POST');
   }
 
   /**
