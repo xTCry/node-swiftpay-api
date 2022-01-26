@@ -50,7 +50,7 @@ export enum StatusValue {
 // Deposits
 
 /** Параметры уведомления о пополнении */
-export type PaymentResponse = {
+export type ResponsePayment = {
   /**
    * SHA256(order_id + amount + token + shop_id).toUpperCase()
    * Например заказ #123 на 10.43руб мерчанта с ID 22: SHA256(12310.430APIdi7O4mSNzd5ZJiMLEWKw22)

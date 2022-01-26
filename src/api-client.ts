@@ -45,7 +45,7 @@ export class ApiClient {
    * @param body Объект уведомления
    * @returns {boolean} Признак валидности
    */
-  public checkSignPayment(body: types.PaymentResponse) {
+  public checkSignPayment(body: types.ResponsePayment) {
     const compareSign = sha256(`${body.order_id + body.amount + this.apiKey + body.shop_id}`).toUpperCase();
 
     return body.sign === compareSign;
