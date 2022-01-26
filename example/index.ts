@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { ApiClient } from '../src';
+import { ApiClient, SystemType } from '../src';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -53,6 +53,20 @@ const main = async () => {
   time = Date.now();
   const orders = await api.orders({ sort: 'id', data: [] });
   console.log('orders', orders);
+  console.log(`Time: ${Date.now() - time} ms`);
+
+  await sleep(500);
+
+  time = Date.now();
+  const payInCreate = await api.payInCreate({
+    order_id: String(4e7 + 3),
+    amount: 120,
+    system: SystemType.CARD,
+    email: `x${123}@test.ru`,
+    redirect_success: `https://google.com/?deposit=success`,
+    redirect_fail: `https://google.com/?deposit=fail`,
+  });
+  console.log('payInCreate', payInCreate);
   console.log(`Time: ${Date.now() - time} ms`);
 };
 
