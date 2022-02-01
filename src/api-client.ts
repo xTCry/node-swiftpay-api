@@ -30,7 +30,7 @@ export class ApiClient {
       const resp = await this._httpClient.request<types.IResponseData<T>>({ url, params, method, data });
       return resp.data;
     } catch (e: any) {
-      if (e.response.status === 404) {
+      if (e.response?.status === 404) {
         throw new ResponseError({ errCode: -1, error: 'Method not found' } as types.IResponseErrorData);
       }
       if (e.response?.data?.error) {
